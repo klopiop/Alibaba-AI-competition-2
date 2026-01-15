@@ -1,0 +1,4 @@
+{
+  "assets": ".next/static",
+  "function": "functions/dist/index.js"
+}

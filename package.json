@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run build:functions && next build",
+    "build:functions": "cd functions && npm install && npm run build",
     "start": "next start",
     "lint": "eslint"
   },
