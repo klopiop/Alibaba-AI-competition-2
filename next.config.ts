@@ -1,10 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 使用 standalone 模式，生成独立的服务器文件
-  output: 'standalone',
+  // 静态导出模式，生成纯静态 HTML 到 out 目录
+  output: 'export',
 
-  // 排除 functions 目录，避免 Next.js 编译它
+  // 禁用图片优化（静态导出不支持）
+  images: {
+    unoptimized: true,
+  },
+
+  // 排除 functions 目录
   outputFileTracingExcludes: {
     '*': ['./functions/**/*'],
   },

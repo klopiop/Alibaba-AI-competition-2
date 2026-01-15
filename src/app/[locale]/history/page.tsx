@@ -1,20 +1,38 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-import { prisma } from "@/lib/db";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import { requireUser } from "@/lib/auth";
 
-export default async function HistoryPage({
-  params,
-}: {
-  params: { locale: Locale };
-}) {
-  const dict = getDictionary(params.locale);
-  const session = await requireUser(params.locale);
-  const conversations = await prisma.conversation.findMany({
-    where: { userId: session.id },
-    orderBy: { createdAt: "desc" },
-  });
+interface Conversation {
+  id: string;
+  type: string;
+  title: string | null;
+  createdAt: string;
+}
+
+export default function HistoryPage() {
+  const params = useParams();
+  const locale = (params?.locale as Locale) || "zh";
+  const dict = getDictionary(locale);
+
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // TODO: 实现 API 调用获取数据
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-gold-soft">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -42,12 +60,12 @@ export default async function HistoryPage({
                   {conversation.title || "Mystic Session"}
                 </div>
                 <div className="text-xs text-zinc-500">
-                  {conversation.createdAt.toLocaleString()}
+                  {new Date(conversation.createdAt).toLocaleString()}
                 </div>
               </div>
               <Link
                 className="rounded-full border border-gold-soft/50 px-5 py-2 text-xs text-gold-strong"
-                href={`/${params.locale}/result/${conversation.id}`}
+                href={`/${locale}/result/${conversation.id}`}
               >
                 {dict.history.view}
               </Link>

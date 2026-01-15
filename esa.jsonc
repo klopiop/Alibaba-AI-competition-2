@@ -1,6 +1,6 @@
 {
   "assets": {
-    "directory": ".next/static"
+    "directory": "out"
   },
   "entry": "functions/dist/index.js"
 }
