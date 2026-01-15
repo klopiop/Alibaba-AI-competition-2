@@ -12,12 +12,16 @@ export default {
                 status: 200
             });
         }
-        // 非 API 请求：返回 undefined 让 ESA 处理静态资源
-        // 或者使用 env.ASSETS.fetch(request) 获取静态资源
+        // 非 API 请求：使用 ASSETS 获取静态资源
         if (env && env.ASSETS) {
-            return env.ASSETS.fetch(request);
+            try {
+                return await env.ASSETS.fetch(request);
+            }
+            catch (e) {
+                return new Response('Static asset not found', { status: 404 });
+            }
         }
-        // 如果没有 ASSETS，返回 undefined 让平台处理
-        return undefined;
+        // 如果没有 ASSETS 绑定，返回 404
+        return new Response('Not Found', { status: 404 });
     }
 };
