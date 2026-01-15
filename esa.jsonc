@@ -1,0 +1,51 @@
+{
+  // ESA Pages 部署配置文件
+  // 静态资源目录（Next.js 构建输出）
+  "assets": ".next",
+  
+  // 函数文件路径（编译后的函数入口）
+  "function": "functions/dist/index.js",
+  
+  // 环境变量配置
+  "env": {
+    // 启用静态导出模式
+    "NEXT_EXPORT": "true"
+  },
+  
+  // 构建命令配置
+  "build": {
+    // 安装依赖
+    "install": "pnpm install",
+    
+    // 构建前端
+    "frontend": "pnpm run build",
+    
+    // 构建后端函数
+    "backend": "cd functions && pnpm install && pnpm run build"
+  },
+  
+  // 部署配置
+  "deployment": {
+    // 部署类型：static（静态）+ functions（函数）
+    "type": "hybrid",
+    
+    // 路由配置
+    "routes": [
+      // API 路由代理到函数
+      {
+        "src": "/api/(.*)",
+        "dest": "/api/$1"
+      },
+      // 静态资源
+      {
+        "src": "/_next/static/(.*)",
+        "dest": "/_next/static/$1"
+      },
+      // 其他所有请求到静态页面
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
+      }
+    ]
+  }
+}
