@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { conversationStorage } from "@/lib/storage";
+import ChatPanel from "@/components/ChatPanel";
 
 type Message = {
   role: "user" | "assistant";

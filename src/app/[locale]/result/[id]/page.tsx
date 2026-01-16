@@ -2,7 +2,9 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 import ResultClient from "./ResultClient";
 
 export const generateStaticParams = async () => {
-  return [];
+  return [
+    { id: 'demo' }
+  ];
 }
 
 export default async function ResultPage({ params }: { params: Promise<{ locale: Locale; id: string }> }) {
