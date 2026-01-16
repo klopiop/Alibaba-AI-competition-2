@@ -1,27 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 import LocaleSwitch from "@/components/LocaleSwitch";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import { getCurrentUser, logout } from "@/lib/api";
 
 export default function PrimaryNav({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
-  const [user, setUser] = useState<{ id: string; email: string; role: string } | null>(null);
 
-  useEffect(() => {
-    setUser(getCurrentUser());
-  }, []);
+  // 用户认证已禁用（用于比赛展示）
+  // const [user, setUser] = useState<{ id: string; email: string; role: string } | null>(null);
 
-  const isAdmin = user?.role === "ADMIN";
+  // useEffect(() => {
+  //   setUser(getCurrentUser());
+  // }, []);
 
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-    window.location.href = `/${locale}`;
-  };
+  // const isAdmin = user?.role === "ADMIN";
+
+  // const handleLogout = () => {
+  //   logout();
+  //   setUser(null);
+  //   window.location.href = `/${locale}`;
+  // };
 
   return (
     <header className="relative z-20 flex items-center justify-between gap-4 px-6 py-6 md:px-12">
@@ -45,16 +45,17 @@ export default function PrimaryNav({ locale }: { locale: Locale }) {
         <Link className="transition hover:text-gold-strong hover:scale-110" href={`/${locale}/history`}>
           {dict.nav.history}
         </Link>
-        {isAdmin && (
+        {/* {isAdmin && (
           <Link className="transition hover:text-gold-strong hover:scale-110" href={`/${locale}/admin`}>
             {dict.nav.admin}
           </Link>
-        )}
+        )} */}
       </nav>
 
       {/* 右侧操作区 */}
       <div className="flex w-1/3 items-center justify-end gap-3">
-        {!user && (
+        {/* 登录注册功能已禁用（用于比赛展示） */}
+        {/* {!user && (
           <>
             <Link
               className="rounded-full border border-gold-muted/40 px-4 py-2 text-xs text-gold-soft transition hover:border-gold-soft/70 hover:text-gold-strong"
@@ -80,7 +81,7 @@ export default function PrimaryNav({ locale }: { locale: Locale }) {
               {locale === "zh" ? "登出" : "Logout"}
             </button>
           </>
-        )}
+        )} */}
         <LocaleSwitch locale={locale} />
       </div>
     </header>

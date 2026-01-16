@@ -25,41 +25,42 @@ type OracleClientProps = {
 };
 
 export default function OracleClient({ locale, dict }: OracleClientProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // 登录认证已禁用（用于比赛展示）
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [step, setStep] = useState<"form" | "divination" | "chat">("form");
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
-  useEffect(() => {
-    setIsAuthenticated(!!getCurrentUser());
-    setIsLoading(false);
-  }, []);
+  // useEffect(() => {
+  //   setIsAuthenticated(!!getCurrentUser());
+  //   setIsLoading(false);
+  // }, []);
 
-  // 1. 检查登录状态
-  if (isLoading) {
-    return null; // 或者显示加载骨架屏
-  }
+  // 登录检查已禁用（用于比赛展示）
+  // if (isLoading) {
+  //   return null; // 或者显示加载骨架屏
+  // }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-6 text-center">
-        <h2 className="text-2xl font-serif text-gold-strong">
-          {locale === "zh" ? "请先登录" : "Login Required"}
-        </h2>
-        <p className="max-w-md text-zinc-400">
-          {locale === "zh" 
-            ? "神机推演需要记录您的命盘信息，请先登录或注册账号。" 
-            : "To cast a reading and save your chart, please login or create an account."}
-        </p>
-        <Link
-          href={`/${locale}/auth/login?redirect=/${locale}/oracle`}
-          className="rounded-full bg-gold-strong px-8 py-3 font-semibold text-black transition hover:scale-105"
-        >
-          {locale === "zh" ? "前往登录" : "Go to Login"}
-        </Link>
-      </div>
-    );
-  }
+  // if (!isAuthenticated) {
+  //   return (
+  //     <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-6 text-center">
+  //       <h2 className="text-2xl font-serif text-gold-strong">
+  //         {locale === "zh" ? "请先登录" : "Login Required"}
+  //       </h2>
+  //       <p className="max-w-md text-zinc-400">
+  //         {locale === "zh" 
+  //           ? "神机推演需要记录您的命盘信息，请先登录或注册账号。" 
+  //           : "To cast a reading and save your chart, please login or create an account."}
+  //       </p>
+  //       <Link
+  //         href={`/${locale}/auth/login?redirect=/${locale}/oracle`}
+  //         className="rounded-full bg-gold-strong px-8 py-3 font-semibold text-black transition hover:scale-105"
+  //       >
+  //         {locale === "zh" ? "前往登录" : "Go to Login"}
+  //       </Link>
+  //     </div>
+  //   );
+  // }
 
   // 2. 处理表单提交
   const handleFormSubmit = (info: UserInfo) => {

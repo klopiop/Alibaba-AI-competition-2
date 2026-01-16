@@ -1,6 +1,6 @@
 /**
- * 阿里云函数计算 API 客户端
- * 用于 ESA Pages 静态部署时调用后端 API
+ * ESA Pages 边缘函数 API 客户端
+ * 直接调用边缘函数，无需单独部署函数计算
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
@@ -20,16 +20,10 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  // 从 localStorage 获取 token
-  const token = typeof window !== 'undefined'
-    ? localStorage.getItem('auth_token')
-    : null;
-
   const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
   });
@@ -43,7 +37,7 @@ export async function apiRequest<T>(
 }
 
 /**
- * Chat API
+ * Chat API - 调用 ESA Pages 边缘函数
  */
 export async function sendChatMessage(data: {
   type: 'oracle' | 'tcm';
@@ -52,10 +46,21 @@ export async function sendChatMessage(data: {
   conversationId?: string;
   systemHint?: string;
 }) {
-  return apiRequest<{ reply: string; conversationId: string }>('/api/chat', {
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+  const endpoint = apiUrl ? `${apiUrl}/api/chat` : '/api/chat';
+  
+  const response = await fetch(endpoint, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Request failed' }));
+    throw new Error(error.error || `API Error: ${response.status}`);
+  }
+
+  return response.json();
 }
 
 /**

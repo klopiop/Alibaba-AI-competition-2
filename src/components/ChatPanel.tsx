@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import type { Locale } from "@/lib/i18n";
+import { sendChatMessage } from "@/lib/api";
 
 type Message = {
   role: "user" | "assistant";
@@ -29,7 +30,7 @@ export default function ChatPanel({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | undefined>(undefined);
 
   const submit = async () => {
     if (!input.trim() || loading) return;
@@ -39,21 +40,13 @@ export default function ChatPanel({
     setLoading(true);
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          locale,
-          type,
-          systemHint,
-          messages: nextMessages,
-          conversationId,
-        }),
+      const data = await sendChatMessage({
+        locale,
+        type,
+        systemHint,
+        messages: nextMessages,
+        conversationId,
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || "Request failed");
-      }
       if (data.conversationId) {
         setConversationId(data.conversationId);
       }

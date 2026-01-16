@@ -1,5 +1,4 @@
 import { prisma } from '../lib/prisma';
-import { getUserFromRequest } from '../lib/auth';
 const typeHints = {
     oracle: {
         zh: '你是东方道法算命神机，以星象、卦辞、符箓语气回应。',
@@ -20,14 +19,19 @@ export async function handler(req) {
     if (req.method === 'OPTIONS') {
         return new Response(null, { headers: corsHeaders });
     }
-    // 验证用户
-    const user = await getUserFromRequest(req.headers);
-    if (!user) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-    }
+    // 验证用户（已禁用，用于比赛展示）
+    // const user = await getUserFromRequest(req.headers);
+    // if (!user) {
+    //   return new Response(
+    //     JSON.stringify({ error: 'Unauthorized' }),
+    //     {
+    //       status: 401,
+    //       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    //     }
+    //   );
+    // }
+    // 使用默认用户 ID（用于比赛展示）
+    const user = { id: 'demo-user', email: 'demo@example.com', role: 'USER' };
     try {
         const payload = (await req.json());
         const { type, messages, locale, conversationId, systemHint } = payload;
@@ -45,12 +49,16 @@ export async function handler(req) {
             })
             : null;
         if (conversation && user.role !== 'ADMIN') {
-            if (conversation.userId !== user.id) {
-                return new Response(JSON.stringify({ error: 'Forbidden' }), {
-                    status: 403,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                });
-            }
+            // 权限检查已禁用（用于比赛展示）
+            // if (conversation.userId !== user.id) {
+            //   return new Response(
+            //     JSON.stringify({ error: 'Forbidden' }),
+            //     {
+            //       status: 403,
+            //       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            //     }
+            //   );
+            // }
         }
         if (!conversation) {
             conversation = await prisma.conversation.create({

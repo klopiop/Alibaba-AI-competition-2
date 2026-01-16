@@ -1,27 +1,50 @@
 // ESA Edge Function 入口文件
-// 只处理 API 请求，其他请求由静态资源处理
+// 路由到不同的 API 端点
+import { handler as chatHandler } from './chat/index';
+import { handler as loginHandler } from './auth/login';
+import { handler as registerHandler } from './auth/register';
+import { handler as exportHandler } from './admin/export';
 export default {
     async fetch(request, env) {
         const url = new URL(request.url);
         const path = url.pathname;
-        // 只处理 API 请求
-        if (path.startsWith('/api/')) {
-            // TODO: 实现实际的 API 逻辑
-            return new Response(JSON.stringify({ message: 'API endpoint', path }), {
-                headers: { 'Content-Type': 'application/json' },
-                status: 200
+        const method = request.method;
+        // CORS 头
+        const corsHeaders = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        };
+        // 处理 OPTIONS 请求
+        if (method === 'OPTIONS') {
+            return new Response(null, { headers: corsHeaders });
+        }
+        // 路由到不同的 API 端点
+        try {
+            if (path === '/api/chat' && method === 'POST') {
+                return await chatHandler(request);
+            }
+            if (path === '/api/auth/login' && method === 'POST') {
+                return await loginHandler(request);
+            }
+            if (path === '/api/auth/register' && method === 'POST') {
+                return await registerHandler(request);
+            }
+            if (path === '/api/admin/export' && method === 'GET') {
+                return await exportHandler(request);
+            }
+            // 未找到的路由
+            return new Response(JSON.stringify({ error: 'Not Found' }), {
+                status: 404,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             });
         }
-        // 非 API 请求：使用 ASSETS 获取静态资源
-        if (env && env.ASSETS) {
-            try {
-                return await env.ASSETS.fetch(request);
-            }
-            catch (e) {
-                return new Response('Static asset not found', { status: 404 });
-            }
+        catch (error) {
+            console.error('API Error:', error);
+            return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+                status: 500,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            });
         }
-        // 如果没有 ASSETS 绑定，返回 404
-        return new Response('Not Found', { status: 404 });
     }
 };
