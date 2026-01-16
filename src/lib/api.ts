@@ -47,6 +47,12 @@ const typeHints = {
   },
 };
 
+const API_CONFIG = {
+  apiKey: 'sk-1a9017c965c355d67198b1171848c063',
+  apiUrl: 'https://apis.iflow.cn/v1/chat/completions',
+  model: 'qwen3-max',
+};
+
 /**
  * Chat API - 直接调用 OpenAI API（比赛展示用）
  */
@@ -59,9 +65,7 @@ export async function sendChatMessage(data: {
 }) {
   const { type, messages, locale, systemHint } = data;
   
-  const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
-  const apiUrl = process.env.NEXT_PUBLIC_OPENAI_API_URL || 'https://api.openai.com/v1/chat/completions';
-  const model = process.env.NEXT_PUBLIC_OPENAI_MODEL || 'gpt-4o-mini';
+  const { apiKey, apiUrl, model } = API_CONFIG;
   
   console.log('API 调用信息:', { 
     hasApiKey: !!apiKey,
@@ -69,10 +73,6 @@ export async function sendChatMessage(data: {
     model,
     messageCount: messages.length
   });
-  
-  if (!apiKey) {
-    throw new Error(locale === 'en' ? 'API key not configured' : 'API 密钥未配置');
-  }
   
   const systemPrompt = [
     locale === 'en' ? 'Respond in English.' : '请使用简体中文回应。',
