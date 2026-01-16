@@ -2,5 +2,5 @@
   "assets": {
     "directory": "out"
   },
-  "entry": "functions/dist/index.js"
+  "entry": "api/index.ts"
 }
